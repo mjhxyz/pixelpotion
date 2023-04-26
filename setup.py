@@ -5,7 +5,7 @@ with open('README.rst', 'r') as f:
 
 setup(
     name="pixelpotion",
-    version="0.1.1",
+    version="0.1.2",
     description="An open-source image processing tool based on the Pillow",
     long_description=long_description,
     author="Mao",

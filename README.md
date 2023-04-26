@@ -20,6 +20,7 @@ pip install pixelpotion
 PixelPotion can be used via the command line interface. Here are some examples:
 
 **Original image:**
+
 ![original](https://img.mjhxyz.top/00008-624526612.png)
 
 **Resize to 100x100:**
@@ -30,7 +31,8 @@ pp resize input.png output.png --width 100 --height 100
 ![100x100](https://img.mjhxyz.top/outpu.png)
 
 
-**Crop to 200x100 JPEG:**
+**Resize to 200x100 JPEG:**
+
 ```bash
 # Crop an image to 200x100 pixels
 pp convert -f input.png -o outpu.jpg -t jpg --width 200 --height 100
