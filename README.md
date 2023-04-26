@@ -12,20 +12,35 @@ PixelPotion is a command line tool based on Pillow for easy processing of PNG, J
 # Installation
 PixelPotion can be installed via pip:
 
-TODO
+```bash
+pip install pixelpotion
+```
 
 # Usage
 PixelPotion can be used via the command line interface. Here are some examples:
 
+**Original image:**
+![original](https://img.mjhxyz.top/00008-624526612.png)
+
+**Resize to 100x100:**
 ```bash
 # Resize an image to 400x400 pixels
-pixelpotion resize input.png output.png --width 400 --height 400
+pp resize input.png output.png --width 100 --height 100
+```
+![100x100](https://img.mjhxyz.top/outpu.png)
 
-# Crop an image to 200x200 pixels
-pp convert -f tmp/test.png -t png -w 200 -he 100 -q 300 -o tmp/out.png
 
+**Crop to 200x100 JPEG:**
+```bash
+# Crop an image to 200x100 pixels
+pp convert -f input.png -o outpu.jpg -t jpg --width 200 --height 100
+```
+![200x100](https://img.mjhxyz.top/outpu.jpg)
+
+**Extract first frame of animated GIF:**
+```bash
 # Extract the first frame of an animated GIF
-pp gif split -f C:\Users\mjhxy\Desktop\input.gif -o tmp -p qq
+pp gif split -f input.gif -o tmp -p frame
 ```
 
 For a full list of available commands and options, please refer to the Command Line Interface Documentation in the project wiki(TODO).

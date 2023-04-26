@@ -1,9 +1,13 @@
 from setuptools import setup, find_packages
 
+with open('README.rst', 'r') as f:
+    long_description = f.read()
+
 setup(
     name="pixelpotion",
-    version="0.1.0",
+    version="0.1.1",
     description="An open-source image processing tool based on the Pillow",
+    long_description=long_description,
     author="Mao",
     author_email="mjhxyz@foxmail.com",
     url="https://github.com/mjhxyz/pixelpotion",
