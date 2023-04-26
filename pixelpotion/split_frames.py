@@ -20,5 +20,5 @@ def split_frames(input_file, output_dir, prefix='frame'):
                 img.save(output_dir + f'/{prefix}-{index + 1:04}.png')
                 img.seek(index + 1)
                 print(f'Saved frame {index + 1}.')
-        except EOFError as e:
+        except EOFError:
             pass

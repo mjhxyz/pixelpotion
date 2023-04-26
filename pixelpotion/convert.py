@@ -2,7 +2,8 @@ from PIL import Image
 import os
 
 
-def convert(input_file, output_file, format=None, width=None, height=None, quality=80, optimize=True):
+def convert(input_file, output_file, format=None, width=None,
+            height=None, quality=80, optimize=True):
     with Image.open(input_file) as img:
         # Check if the output format is one of the supported formats
         if format and format.lower() not in ['jpg', 'jpeg', 'png']:
