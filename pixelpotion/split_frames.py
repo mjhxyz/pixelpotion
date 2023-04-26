@@ -13,12 +13,12 @@ def split_frames(input_file, output_dir, prefix='frame'):
     # Create the output directory if it doesn't exist
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-    img = Image.open(input_file)
-    try:
-        while True:
-            index = img.tell()
-            img.save(output_dir + f'/{prefix}-{index + 1:04}.png')
-            img.seek(index + 1)
-            print(f'Saved frame {index + 1}.')
-    except EOFError:
-        pass
+    with Image.open(input_file) as img:
+        try:
+            while True:
+                index = img.tell()
+                img.save(output_dir + f'/{prefix}-{index + 1:04}.png')
+                img.seek(index + 1)
+                print(f'Saved frame {index + 1}.')
+        except EOFError as e:
+            pass
