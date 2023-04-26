@@ -26,8 +26,8 @@ def main():
     convert_parser.add_argument(
         '-o', '--output', help='Output file path of image', required=True)
     convert_parser.add_argument(
-        '-t', '--type', help='Output image format (default: JPEG)',
-        default='JPEG', required=False)
+        '-t', '--type', help='Output image format (default: input image format)',
+        default=None, required=False)
     convert_parser.add_argument(
         '-w', '--width', help='Output image width (default: original width)',
         type=int, required=False)

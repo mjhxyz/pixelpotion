@@ -4,9 +4,9 @@ PixelPotion is a command line tool based on Pillow for easy processing of PNG, J
 ## Features
 
 - Supports PNG, JPG, and GIF image formats
-- Resize images to a specified width and height
-- Crop images to a specified size and position
-- Retrieve individual frames from animated GIFs
+- `Resize` images to a specified width and height
+- `Crop` images to a specified size and position
+- `Retrieve` individual frames from animated GIFs
 - Save processed images to disk
 
 # Installation
