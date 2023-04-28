@@ -1,6 +1,9 @@
 # PixelPotion
 PixelPotion is a command line tool based on Pillow for easy processing of PNG, JPG, and GIF images. It provides a simple and intuitive interface for performing common image operations such as resizing, cropping, and retrieving GIF frames.
 
+
+This project is an open-source project inspired by the services and technologies provided by [Qiniu Cloud](https://developer.qiniu.com/dora/1279/basic-processing-images-imageview2). I am inspired by Qiniu Cloud's innovative solutions and hope to provide a similar level of functionality to developers using our open-source project. I appreciate the inspiration provided by Qiniu Cloud and is committed to the development and promotion of the open-source community.
+
 ## Features
 
 - Supports PNG, JPG, and GIF image formats
