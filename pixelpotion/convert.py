@@ -1,47 +1,135 @@
-from PIL import Image
 import os
+from collections import namedtuple
+import re
+
+from PIL import Image
 
 
-def convert(input_file, output_file, format=None, width=None,
-            height=None, quality=80, optimize=True):
+mode = '(1|2|3|4|5)'
+w = '\d{1,4}'
+h = '\d{1,4}'
+image_format = '(jpeg|jpg|png)'
+interlace = '[^/]+'
+q = '\d{1,3}'
+num_colors = '\d{1,3}'
+ignore_error = '[^/]+'
+
+fields_dict = {
+    'mode': {'default': 1, 'type': str},
+    'w': {'default': 0, 'type': int},
+    'h': {'default': 0, 'type': int},
+    'image_format': {'default': 'jpg', 'type': str},
+    'interlace': {'default': 0, 'type': int},
+    'q': {'default': 100, 'type': int},
+    'num_colors': {'default': 128, 'type': int},
+    'ignore_error': {'default': 0, 'type': int},
+}
+
+header_patttern = r'^image/' + fr'(?P<mode>{mode})/'
+
+optional_fields_pattern = (
+    fr'(/format/(?P<image_format>{image_format}))?'
+    r'(/interlace/(?P<interlace>[^/]+))?'
+    r'(/q/(?P<q>\d+))?'
+    r'(/colors/(?P<num_colors>\d+))?'
+    r'(/ignore_error/(?P<ignore_error>[^/]+))?'
+)
+
+image_p = (
+    fr'{header_patttern}'
+    fr'w/(?P<w>{w})/'
+    fr'h/(?P<h>{h})'
+    f'{optional_fields_pattern}'
+    r'$'
+)
+
+image_p2 = (
+    fr'{header_patttern}'
+    fr'(w/(?P<w>{w})|h/(?P<h>{h}))'
+    f'{optional_fields_pattern}'
+    r'$'
+)
+
+ImageData = namedtuple(
+    'ImageData',
+    ['mode', 'w', 'h', 'image_format',
+     'interlace', 'q', 'num_colors', 'ignore_error'
+     ])
+
+
+class Routes:
+    def __init__(self):
+        self.routes = []
+
+    def add_route(self, route):
+        self.routes.append(route)
+
+    def get_or_default(self, **kwargs):
+        for key, value in kwargs.items():
+            if value is None:
+                kwargs[key] = fields_dict[key]['default']
+            else:
+                kwargs[key] = fields_dict[key]['type'](value)
+        return kwargs
+
+    def route(self, *patterns):
+        def decorator(func):
+            def wrapper(d, input_file, output_file):
+                d = ImageData(**self.get_or_default(**d))
+                return func(d, input_file, output_file)
+            self.add_route((patterns, wrapper))
+            return func
+        return decorator
+
+    def match(self, path):
+        for patterns, func in self.routes:
+            for pattern in patterns:
+                match = re.match(pattern, path)
+                if match:
+                    return func, match.groupdict()
+        return None, None
+
+
+def convert(path, input, output):
+    func, data = routes.match(path)
+    if not func:
+        return False
+    func(data, input_file=input, output_file=output)
+
+
+routes = Routes()
+
+
+@routes.route(image_p, image_p2)
+def mode1handler(d, input_file, output_file):
     with Image.open(input_file) as img:
-        # Check if the output format is one of the supported formats
-        if format and format.lower() not in ['jpg', 'jpeg', 'png']:
-            raise ValueError(
-                f'Unsupported format: {format}. Supported formats are: JPEG, PNG.')
+        if d.image_format is None:
+            d.image_format = img.format
+        w = d.w
+        h = d.h
 
-        # Set the output format to the input image's format if none is provided
-        if not format:
-            format = img.format
-
-        # quality and optimize may be None
-        if quality is None:
-            quality = 80
-        if optimize is None:
-            optimize = True
-
-        # If neither width nor height is given, use the original size of the image
-        if not width and not height:
-            width, height = img.size
-        # If only width is given, calculate height automatically
-        elif width and not height:
-            height = int(width / img.width * img.height)
-        # If only height is given, calculate width automatically
-        elif height and not width:
-            width = int(height / img.height * img.width)
-        # If both width and height are given, resize the image to the given dimensions
+        if not w and not h:
+            w, h = img.size
+        elif w and not h:
+            h = int(w / img.width * img.height)
+        elif h and not w:
+            w = int(h / img.height * img.width)
         else:
             pass
 
-        img = img.resize((width, height))
+        if w > img.width:
+            w = img.width
+        if h > img.height:
+            h = img.height
+        # 居中裁剪后的矩形
+        rect = (img.width - w) / 2, (img.height - h) / \
+            2, (img.width + w) / 2, (img.height + h) / 2
 
-        if format.lower() == 'jpg':
-            format = 'JPEG'
+        # img = img.resize((w, h))
+        img = img.crop(rect)
 
-        # Save the image
-        img.save(output_file, format=format,
-                 quality=quality, optimize=optimize)
+        img.save(output_file, format=d.image_format, quality=d.q)
 
-    # Get the compressed file size
-    compressed_size = os.path.getsize(output_file) / 1024
-    print(f'Compressed file size: {compressed_size:.2f} KB')
+
+path = 'image/1/w/100/format/jpeg/interlace/1/q/90/colors/2/ignore_error/1'
+convert(path, 'tmp/test.png', 'tmp/test.jpg')
